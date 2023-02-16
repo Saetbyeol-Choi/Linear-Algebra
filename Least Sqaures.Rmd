@@ -1,0 +1,85 @@
+---
+title: "Least Squares"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+date: "2022-09-10"
+
+---
+
+## Now that football season is upon us, let’s put Linear Algebra to good use!
+```{r}
+library(pracma)
+library(MASS)
+
+df <- read.csv(file = "C:\\Users\\sbyeo\\Downloads\\rating.csv", sep = ',', header = TRUE)
+```
+
+
+### a. Create a Least Square model to relate the dependent variable quarterback rating to the percentage of completions(Pct Comp).
+```{r}
+rating = matrix(c(df$Rating.Pts), ncol = 1)
+
+pct_comp <- matrix(c(rep(1,length(df$Pct.Comp)), df$Pct.Comp), ncol= 2)
+
+x_hat1 <- ginv(pct_comp)%*%rating
+x_hat1
+```
+>y = B1x + B0
+
+>The equation is rating = 1.746(pct_comp) - 22.033
+
+### b. Create a Least Square model to relate the dependent variable quarterback rating to the percentage of Completions (Pct Comp) and interceptions. (Pct Int)
+```{r}
+pct_int <- c(df$Pct.Int)
+
+pct_ci = matrix(c(pct_comp, pct_int), ncol = 3)
+
+x_hat2 <- ginv(pct_ci)%*%rating
+x_hat2
+```
+>y = B2x2 + B1x1 + B0
+
+>The equation is rating = -3.076(pct_int) + 1.662(pct_com) - 9.109
+
+### c. Determine the least square error (square root of sum of square errors) for models in part a and b. Does using an extra variable, namely percentage of interceptions, improve the accuracy of the model for this data set? Comment.
+
+***Finding the error for model in part a***
+```{r}
+Ax_hat1 = pct_comp%*%x_hat1
+error_a = norm(rating-Ax_hat1, "2")
+error_a
+```
+
+***Finding the error for model in part b***
+```{r}
+Ax_hat2 = pct_ci%*%x_hat2
+error_b = norm(rating-Ax_hat2, "2")
+error_b
+```
+>ANSWER FOR C: The addition of an extra variable reduces the error thus improving the accuracy of the model.
+
+### d. Use your models in part a and b to predict the rating for a quarterback with percentage of completions of 60%, and percentage of interceptions of 3%.
+
+***Model a:***
+```{r}
+rating_a = (matrix(c(1, 60), ncol = 2))%*%x_hat1
+rating_a
+```
+>The predicted rating for model a = 82.704
+
+***Model b:***
+```{r}
+pct_ci2 = matrix(c(1, 60, 3), ncol = 3)
+rating_b = pct_ci2%*%x_hat2
+rating_b
+```
+>The predicted rating for model a = 81.392
+
+
+
+
+
+
+
