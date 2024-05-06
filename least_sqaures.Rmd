@@ -1,12 +1,3 @@
----
-title: "Least Squares"
-output: 
-  html_document:
-    toc: true
-    toc_float: true
-
----
-
 ## Now that football season is upon us, let’s put Linear Algebra to good use!
 ```{r}
 library(pracma)
